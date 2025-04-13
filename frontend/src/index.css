@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Apply base styles to the body */
+@layer base {
+  body {
+    @apply bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased;
+    /*
+         - bg-gray-100: Light gray background for light mode
+         - dark:bg-gray-950: Very dark gray background for dark mode
+         - text-gray-900: Default text color for light mode
+         - dark:text-gray-100: Default text color for dark mode
+         - antialiased: Improves font rendering smoothness
+      */
+  }
+
+  /* Optional: Improve focus outlines globally */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-gray-900;
+  }
+}

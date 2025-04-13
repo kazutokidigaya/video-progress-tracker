@@ -1,0 +1,90 @@
+# ~~ General Ignores ~~
+# Operating System Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*~
+
+# IDE / Editor specific files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sublime-project
+*.sublime-workspace
+
+# ~~ Dependency Directories ~~
+# Node modules (matches in both frontend and backend, and any nested ones)
+node_modules
+frontend/node_modules
+backend/node_modules
+# Bower components (if used)
+bower_components/
+# JSPM packages (if used)
+jspm_packages/
+
+# ~~ Logs ~~
+# Log files
+logs/
+*.log
+# npm/yarn specific logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ~~ Environment Variables ~~
+# Ignore all .env files - DO NOT commit secrets!
+# Keep .env.example checked in if you use it.
+backend/.env
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# ~~ Runtime Data ~~
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ~~ Build Output / Temporary Files ~~
+# Common build folder names (anchored to frontend/backend)
+/frontend/dist/
+/frontend/build/
+/frontend/.vite/
+/backend/dist/ # If backend uses a build step
+# Other common build/temp folders
+build/
+dist/
+out/
+.cache/
+.parcel-cache/
+*.tsbuildinfo
+
+# ~~ Test / Coverage Reports ~~
+coverage/
+.nyc_output/
+*.lcov
+
+# ~~ Optional Files ~~
+# Optional npm cache directory
+.npm
+# Optional eslint cache
+.eslintcache
+# Optional stylelint cache
+.stylelintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Other specific ignores if needed...
+# /frontend/specific-frontend-ignore.file
+# /backend/specific-backend-ignore.file
