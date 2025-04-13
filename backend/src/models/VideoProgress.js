@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {
   mergeIntervals,
   calculateTotalSeconds,
-} from "../utils/intervalUtils.js"; // Ensure utils are correctly imported with .js
+} from "../utils/intervalUtils.js";
 
 const Schema = mongoose.Schema;
 
@@ -31,13 +31,8 @@ const videoProgressSchema = new Schema(
 
 videoProgressSchema.index({ userId: 1, videoId: 1 }, { unique: true });
 
-// --- Methods ---
+//Corrected:** Merges the newly provided intervals.
 
-/**
- * **Corrected:** Merges the newly provided intervals (e.g., from video.played
- * in the current session) with the intervals already stored in the database.
- * @param {Array<{start: number, end: number}>} newIntervalsArray - Array of watched intervals from the current session.
- */
 videoProgressSchema.methods.setWatchedIntervals = function (newIntervalsArray) {
   // 1. Get previously stored intervals (ensure it's an array)
   const existingIntervals = this.watchedIntervals || [];
@@ -48,8 +43,7 @@ videoProgressSchema.methods.setWatchedIntervals = function (newIntervalsArray) {
       `Invalid new intervals array received for video ${this.videoId}, user ${this.userId}:`,
       newIntervalsArray
     );
-    // If new intervals are invalid, we just recalculate progress based on existing ones (if duration changed etc.)
-    this.calculateProgress(); // Still recalculate if needed
+    this.calculateProgress();
     return;
   }
 
@@ -67,7 +61,6 @@ videoProgressSchema.methods.setWatchedIntervals = function (newIntervalsArray) {
   const combinedIntervals = [...existingIntervals, ...validNewIntervals];
 
   // 5. Merge the combined set and update the document's watchedIntervals
-  // The mergeIntervals utility handles sorting and merging overlaps.
   this.watchedIntervals = mergeIntervals(combinedIntervals);
 
   // 6. Recalculate progress based on the final merged intervals
@@ -76,7 +69,6 @@ videoProgressSchema.methods.setWatchedIntervals = function (newIntervalsArray) {
 
 /**
  * Recalculates totalUniqueWatchedSeconds and progressPercentage.
- * (This method remains the same)
  */
 videoProgressSchema.methods.calculateProgress = function () {
   this.totalUniqueWatchedSeconds = calculateTotalSeconds(this.watchedIntervals);
@@ -97,8 +89,6 @@ videoProgressSchema.methods.calculateProgress = function () {
   }
 };
 
-// --- Middleware ---
-// Pre-save hook remains the same
 videoProgressSchema.pre("save", function (next) {
   if (
     this.isModified("watchedIntervals") ||
@@ -109,9 +99,6 @@ videoProgressSchema.pre("save", function (next) {
       this.isModified("watchedIntervals") ||
       this.isModified("videoDuration")
     ) {
-      // Only recalculate if intervals or duration specifically changed.
-      // The setWatchedIntervals method already calls calculateProgress.
-      // This pre-save hook might primarily handle direct duration updates now.
       this.calculateProgress();
     }
   }

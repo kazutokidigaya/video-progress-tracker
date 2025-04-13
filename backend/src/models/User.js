@@ -14,16 +14,15 @@ const userSchema = new mongoose.Schema(
     },
     password: { type: String, required: true, minlength: 6, select: false },
     role: {
-      // Added Role field
       type: String,
-      enum: ["user", "admin"], // Allowed roles
-      default: "user", // Default role is 'user'
+      enum: ["user", "admin"],
+      default: "user",
     },
   },
   { timestamps: true }
 );
 
-// Pre-save hook for password hashing (remains the same)
+// Pre-save hook for password hashing
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(12);
@@ -31,7 +30,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Method for password comparison (remains the same)
+// Method for password comparison
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };

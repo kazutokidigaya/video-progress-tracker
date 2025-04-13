@@ -2,7 +2,7 @@
 
 ## Description
 
-This project is a web application built using the MERN stack (MongoDB, Express, React, Node.js) designed to accurately track the unique portions of lecture videos watched by users. This tool records specific time intervals viewed, merges overlapping segments, and calculates progress based only on the content actually seen, ignoring skipped sections. The tool has user authentication, persistence of progress, and an admin interface for uploading videos using Cloudinary.
+This project is a web application built using the MERN stack (MongoDB, Express, React, Node.js) designed to accurately track the unique portions of lecture videos watched by users. This tool records specific time intervals viewed, merges overlapping segments, and calculates progress based only on the content actually seen, ignoring skipped sections. The tool has user authentication, persistence of progress, and an admin interface for uploading videos using Cloudinary.[https://video-progress-tracker-274l.vercel.app/]
 
 ## Features
 
@@ -19,7 +19,7 @@ This project is a web application built using the MERN stack (MongoDB, Express, 
 1.  **Clone the Code:**
 
     ```bash
-    git clone [Your Repository Link Here]
+    git clone https://github.com/kazutokidigaya/video-progress-tracker.git
     cd video-progress-tracker
     ```
 
@@ -27,7 +27,7 @@ This project is a web application built using the MERN stack (MongoDB, Express, 
 
     - Go to the backend folder: `cd backend`
     - Install packages: `npm install`
-    - Create a `.env` file (copy `.env.example` if provided, or create new) and fill in your details:
+    - Create a `.env` file and fill in your details:
 
       ```dotenv
       PORT=5001
@@ -44,7 +44,7 @@ This project is a web application built using the MERN stack (MongoDB, Express, 
     - **Create an Admin User:** Start the backend (`npm run dev`). Sign up a user via the frontend. Then, connect to your MongoDB database directly and change that user's `role` field from `"user"` to `"admin"`.
 
 3.  **Set Up the Frontend:**
-    - Go to the frontend folder: `cd ../frontend`
+    - Go to the frontend folder: `cd frontend`
     - Install packages: `npm install`
     - Create a `.env` file in the `frontend` directory:
       ```dotenv
@@ -56,8 +56,8 @@ This project is a web application built using the MERN stack (MongoDB, Express, 
 
 1.  **Start the Backend:**
 
-    - In the `backend` folder, run: `npm run dev`
-    - (Listens on port 5001 by default)
+    - In the `backend` folder, run: `npm run start`
+    - (Listens on port 5001 )
 
 2.  **Start the Frontend:**
 
@@ -65,14 +65,14 @@ This project is a web application built using the MERN stack (MongoDB, Express, 
     - (Usually opens on port 5173)
 
 3.  **Open in Browser:**
-    - Go to `http://localhost:5173` (or the port shown by the frontend).
+    - Go to `http://localhost:5173`.
 
 ## Our Approach to Tracking Progress
 
 Getting the unique watch time right, especially with users skipping around, was the main puzzle!
 
-- **The Challenge:** Early attempts using simple video events (`play`, `pause`, `seeking`, `ended`) to manually track start/end times of watched segments got messy. It was hard to reliably figure out the _exact_ moments playback started and stopped, leading to inaccurate intervals when users jumped around.
-- **The Solution (`video.played`):** We landed on using the browser's built-in `video.played` property. This handy feature gives us a `TimeRanges` object, which is basically a list of time segments (`[start, end]`) that the browser _knows_ have been played during the current session.
+- **The Challenge:** Early attempts using simple video events (`play`, `pause`, `seeking`, `ended`) to manually track start/end times of watched segments got messy. It was hard to figure out the _exact_ moments playback started and stopped, leading to inaccurate intervals when users jumped around.
+- **The Solution (`video.played`):** I landed on using the browser's built-in `video.played` property. This feature gives us a `TimeRanges` object, which is basically a list of time segments (`[start, end]`) that the browser _knows_ have been played during the current session.
 
   - The frontend (`VideoPlayer.jsx`) reads these `TimeRanges` when the user pauses, seeks, the video ends, or periodically during playback.
   - It converts these ranges into a simple array like `[{start: 0, end: 10}, {start: 30, end: 40}]`.
@@ -87,23 +87,9 @@ Getting the unique watch time right, especially with users skipping around, was 
   6.  The progress percentage is calculated based on this total unique time versus the video's total duration.
   7.  Everything (merged intervals, total seconds, percentage, last position) is saved back to MongoDB.
 
-## Challenges We Faced (and How We Solved Them)
+## Challenges Faced (and How I Solved Them)
 
 - **Getting Accurate Intervals (Ignoring Skips):** Manually tracking start/stop times with events was unreliable with seeking.
   - **Solution:** Switched to using the browser's `video.played` property, letting the browser handle the tricky parts of determining played ranges.
 - **Backend Version Errors:** Sending too many save requests too quickly from the frontend caused database conflicts.
   - **Solution:** Implemented debouncing on the frontend for saves triggered by user actions (pause/seek/end), reducing the frequency of backend calls.
-- **Weird Video Jump on Load:** Sometimes the video would jump forward then back to 0 when starting fresh.
-  - **Solution:** Adjusted the initial seek logic to only force the video's `currentTime` if resuming from a position greater than 0, avoiding overriding the browser's default start.
-- **Progress Resetting:** The `video.played` approach initially overwrote old progress.
-  - **Solution:** Fixed the backend logic to correctly _combine_ the new intervals (from the current session) with the _existing_ intervals from the database before merging.
-
-## Demo (Optional)
-
-_[Feel free to add links to screenshots or a video showing off your tracker!]_
-
-- _Example: Screenshot of the Lectures list_
-- _Example: Screenshot of the Player with the segmented progress bar_
-- _Example: Link to a quick video demo_
-
----
